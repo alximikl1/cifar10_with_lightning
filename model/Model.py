@@ -5,6 +5,8 @@ import torch.nn.functional as F
 from torchmetrics.functional import accuracy
 import lightning as L
 
+from model import EPOCHS
+
 class CNNNet(nn.Module):
     def __init__(self):
         super(CNNNet, self).__init__()
@@ -28,7 +30,7 @@ class CNNNet(nn.Module):
         # Dropout layer
         self.dropout = nn.Dropout(0.25)
         
-        self.softmax = nn.LogSoftmax()
+        self.softmax = nn.LogSoftmax(dim=0)
 
     def forward(self, x):
         x = self.pool(F.elu(self.conv1(x)))
@@ -45,12 +47,11 @@ class CNNNet(nn.Module):
 
 
 class CIFAR10Model(L.LightningModule):
-    def __init__(self, model, epochs, learning_rate=0.0015):
+    def __init__(self, model, learning_rate=0.0015):
         super().__init__()
 
         # We take in input dimensions as parameters and use those to dynamically build model.
         self.learning_rate = learning_rate
-        self.epochs = epochs
         self.criterion = nn.CrossEntropyLoss()
         self.model = model
 
@@ -88,5 +89,5 @@ class CIFAR10Model(L.LightningModule):
 
     def configure_optimizers(self):
         optimizer = optim.SGD(self.model.parameters(), lr=self.learning_rate, momentum=0.9)
-        scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.012, epochs=1, steps_per_epoch=self.epochs)
+        scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.012, epochs=1, steps_per_epoch=EPOCHS)
         return [optimizer], [scheduler]

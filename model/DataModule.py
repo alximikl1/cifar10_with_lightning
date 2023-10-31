@@ -2,7 +2,8 @@ import lightning as L
 from torch.utils.data import random_split, DataLoader
 import torchvision.transforms as transforms
 from torchvision.datasets.cifar import CIFAR10
-from data_model import BATCH_SIZE
+
+from model import BATCH_SIZE
 
 class CIFAR10DataModule(L.LightningDataModule):
     def __init__(self, data_dir: str = "data"):
@@ -30,10 +31,10 @@ class CIFAR10DataModule(L.LightningDataModule):
             self.mnist_test = CIFAR10(self.data_dir, train=False, transform=self.transform)
 
     def train_dataloader(self):
-        return DataLoader(self.mnist_train, batch_size=BATCH_SIZE)
+        return DataLoader(self.mnist_train, batch_size=BATCH_SIZE, num_workers=1)
 
     def val_dataloader(self):
-        return DataLoader(self.mnist_val, batch_size=BATCH_SIZE)
+        return DataLoader(self.mnist_val, batch_size=BATCH_SIZE, num_workers=1)
 
     def test_dataloader(self):
-        return DataLoader(self.mnist_test, batch_size=BATCH_SIZE)
+        return DataLoader(self.mnist_test, batch_size=BATCH_SIZE, num_workers=1)

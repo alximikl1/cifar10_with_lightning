@@ -1,0 +1,2 @@
+BATCH_SIZE = 40
+EPOCHS = 12
